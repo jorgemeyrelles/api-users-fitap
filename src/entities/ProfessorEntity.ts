@@ -7,7 +7,8 @@ export default class ProfessorEntity {
   constructor(alunos?: AlunoEntity[]) {
     this.alunos = alunos;
   }
+  @PrimaryGeneratedColumn("uuid")
   id!: UUID;
   @OneToMany(() => AlunoEntity, (aluno) => aluno.professor)
-  alunos?: AlunoEntity[]
+  alunos?: AlunoEntity[];
 }
