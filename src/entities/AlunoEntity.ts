@@ -16,7 +16,7 @@ export default class AlunoEntity {
     this.professor = professor;
     this.academia = academia;
   }
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id!: UUID;
   @ManyToOne(() => ProfessorEntity, (professor) => professor.alunos)
   professor: ProfessorEntity;
