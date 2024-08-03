@@ -9,7 +9,7 @@ export default class AcademiaEntity {
     this.cidade = cidade;
     this.bairro = bairro;
   }
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id!: UUID;
   @Column()
   nome: string;
