@@ -33,10 +33,7 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
 
       Object.assign(usuario, user);
 
-      await this.repository.update(idUsuario, {
-        ...usuario,
-        updated_at: new Date(),
-      });
+      await this.repository.update(idUsuario, usuario);
 
       return { success: true };
     } catch (error) {
@@ -55,7 +52,6 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
       const deleted = {
         ...usuario,
         deleted_at: new Date(),
-        updated_at: new Date(),
       };
 
       await this.repository.update(id, deleted);
@@ -66,19 +62,31 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
       return { success: false, message: "Erro ao tentar deletar usuário." };
     }
   }
-  getUsuarioById(
+  async getUsuarioById(
     id: UUID
-  ): Promise<{ success: boolean; message: UsuarioEntity }> {
-    throw new Error("Method not implemented.");
+  ): Promise<{ success: boolean; message: UsuarioEntity | string }> {
+    try {
+      const usuario = await this.existsUsuario(id);
+      if (!usuario) {
+        return { success: false, message: "Usuário não encontrado." };
+      }
+      return { success: true, message: usuario };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: "Erro ao tentar buscar usuario por id.",
+      };
+    }
   }
   getUsuarioByPerfil(
     perfil: string
-  ): Promise<{ success: boolean; message: UsuarioEntity[] }> {
+  ): Promise<{ success: boolean; message: UsuarioEntity[] | string }> {
     throw new Error("Method not implemented.");
   }
   getUsuarioByEmail(
     email: string
-  ): Promise<{ success: boolean; message: UsuarioEntity }> {
+  ): Promise<{ success: boolean; message: UsuarioEntity | string }> {
     throw new Error("Method not implemented.");
   }
 }

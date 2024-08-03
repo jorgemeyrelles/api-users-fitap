@@ -13,13 +13,17 @@ export default interface InterfaceUsuarioRepository {
   ): void | Promise<{ success: boolean; message?: string }>;
   getUsuarioById(
     id: UUID
-  ): UsuarioEntity | Promise<{ success: boolean; message?: UsuarioEntity }>;
+  ):
+    | UsuarioEntity
+    | Promise<{ success: boolean; message?: UsuarioEntity | string }>;
   getUsuarioByPerfil(
     perfil: string
   ):
     | Array<UsuarioEntity>
-    | Promise<{ success: boolean; message?: UsuarioEntity[] }>;
+    | Promise<{ success: boolean; message?: UsuarioEntity[] | string }>;
   getUsuarioByEmail(
     email: string
-  ): UsuarioEntity | Promise<{ success: boolean; message?: UsuarioEntity }>;
+  ):
+    | UsuarioEntity
+    | Promise<{ success: boolean; message?: UsuarioEntity | string }>;
 }

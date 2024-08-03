@@ -3,11 +3,14 @@ import AcademiaEntity from "./AcademiaEntity.js";
 import ProfessorEntity from "./ProfessorEntity.js";
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 
 @Entity()
@@ -27,4 +30,10 @@ export default class AlunoEntity {
   })
   @JoinColumn()
   academia?: AcademiaEntity;
+  @CreateDateColumn({ type: "date" })
+  created_at!: Date;
+  @UpdateDateColumn({ type: "date" })
+  updated_at!: Date;
+  @DeleteDateColumn({ type: "date" })
+  deleted_at!: Date;
 }

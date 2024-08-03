@@ -1,6 +1,13 @@
 import { UUID } from "crypto";
 import AlunoEntity from "./AlunoEntity.js";
-import { Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export default class ProfessorEntity {
@@ -11,4 +18,10 @@ export default class ProfessorEntity {
   id!: UUID;
   @OneToMany(() => AlunoEntity, (aluno) => aluno.professor)
   alunos?: AlunoEntity[];
+  @CreateDateColumn({ type: "date" })
+  created_at!: Date;
+  @UpdateDateColumn({ type: "date" })
+  updated_at!: Date;
+  @DeleteDateColumn({ type: "date" })
+  deleted_at!: Date;
 }

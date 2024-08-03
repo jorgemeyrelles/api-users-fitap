@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import EnumPerfil from "../enums/EnumPerfil.js";
 
 @Entity()
 export default class UsuarioEntity {
@@ -14,7 +15,7 @@ export default class UsuarioEntity {
     nome: string,
     email: string,
     celular: string,
-    perfil: string,
+    perfil: number,
     senha: string
   ) {
     this.nome = nome;
@@ -31,8 +32,12 @@ export default class UsuarioEntity {
   email: string;
   @Column({ unique: true })
   celular: string;
-  @Column({ nullable: false })
-  perfil: string;
+  @Column({
+    type: "enum",
+    enum: EnumPerfil,
+    default: EnumPerfil.admin,
+  })
+  perfil: number;
   @Column({ nullable: false })
   senha: string;
   @CreateDateColumn({ type: "date" })

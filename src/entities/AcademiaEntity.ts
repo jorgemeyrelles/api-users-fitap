@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export default class AcademiaEntity {
@@ -19,4 +19,10 @@ export default class AcademiaEntity {
   cidade: string;
   @Column()
   bairro: string;
+  @CreateDateColumn({ type: "date" })
+  created_at!: Date;
+  @UpdateDateColumn({ type: "date" })
+  updated_at!: Date;
+  @DeleteDateColumn({ type: "date" })
+  deleted_at!: Date;
 }

@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import TipoUsuario from "../types/TypeUsuario.js";
 import EnumPerfil from "../enums/EnumPerfil.js";
+import UsuarioEntity from "../entities/UsuarioEntity.js";
 
 export default class UsuarioController {
   newUsuario(req: Request, res: Response) {
-    const { email, nome, perfil, senha } = <TipoUsuario>req.body;
+    const { email, nome, perfil, senha } = <UsuarioEntity>req.body;
     const newUser = {
       email,
       nome,
@@ -15,16 +16,16 @@ export default class UsuarioController {
   }
   updateUsuario(req: Request, res: Response) {
     const updateUser = req.body;
-    const id = req.params;
+    const { id } = req.params;
   }
   deleteUsuario(req: Request, res: Response) {
-    const id = req.params;
+    const { id } = req.params;
   }
   getUsuarioByPerfil(req: Request, res: Response) {
     const { perfil } = req.params;
   }
   getUsuarioById(req: Request, res: Response) {
-    const id = req.params;
+    const { id } = req.params;
   }
   getUsuarioByEmail(req: Request, res: Response) {
     const email = req.body;
