@@ -2,7 +2,7 @@ import { UUID } from "crypto";
 import UsuarioEntity from "../entities/UsuarioEntity.js";
 import InterfaceUsuarioRepository from "./interfaces/InterfaceUsuarioRepository.js";
 import { Repository } from "typeorm";
-import AcademiaEntity from "../entities/AcademiaEntity.js";
+import EnumPerfil from "../enums/EnumPerfil.js";
 
 export default class UsuarioRepository implements InterfaceUsuarioRepository {
   private repository: Repository<UsuarioEntity>;
@@ -11,9 +11,12 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
     this.repository = repository;
   }
 
-  private async existsUsuario(id: UUID): Promise<UsuarioEntity | null> {
+  private async usuarioByKey<Tipo extends keyof UsuarioEntity>(
+    key: Tipo,
+    valor: UsuarioEntity[Tipo]
+  ): Promise<UsuarioEntity | null> {
     const user = await this.repository.findOne({
-      where: { id },
+      where: { [key]: valor },
     });
     return user;
   }
@@ -26,7 +29,10 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
     user: UsuarioEntity
   ): Promise<{ success: boolean; message?: string }> {
     try {
-      const usuario = await this.existsUsuario(idUsuario);
+      const usuario = await this.usuarioByKey(
+        "id" as keyof UsuarioEntity,
+        idUsuario
+      );
       if (!usuario) {
         return { success: false, message: "Usuário não encontrado" };
       }
@@ -45,7 +51,7 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
     id: UUID
   ): Promise<{ success: boolean; message?: string }> {
     try {
-      const usuario = await this.existsUsuario(id);
+      const usuario = await this.usuarioByKey("id" as keyof UsuarioEntity, id);
       if (!usuario) {
         return { success: false, message: "Usuário não encontrado." };
       }
@@ -66,7 +72,7 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
     id: UUID
   ): Promise<{ success: boolean; message: UsuarioEntity | string }> {
     try {
-      const usuario = await this.existsUsuario(id);
+      const usuario = await this.usuarioByKey("id" as keyof UsuarioEntity, id);
       if (!usuario) {
         return { success: false, message: "Usuário não encontrado." };
       }
@@ -79,14 +85,40 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
       };
     }
   }
-  getUsuarioByPerfil(
-    perfil: string
+  async getUsuarioByPerfil(
+    perfil: EnumPerfil
   ): Promise<{ success: boolean; message: UsuarioEntity[] | string }> {
-    throw new Error("Method not implemented.");
+    try {
+      const usuarios = await this.repository.find({
+        where: { perfil },
+      });
+      if (usuarios.length === 0) {
+        return { success: false, message: "Nenhum usuário encontrado." };
+      }
+      return { success: true, message: usuarios };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: "Erro ao tentar buscar usuario pelo perfil.",
+      };
+    }
   }
-  getUsuarioByEmail(
+  async getUsuarioByEmail(
     email: string
   ): Promise<{ success: boolean; message: UsuarioEntity | string }> {
-    throw new Error("Method not implemented.");
+    try {
+      const usuario = await this.usuarioByKey(
+        "email" as keyof UsuarioEntity,
+        email
+      );
+      if (!usuario) {
+        return { success: false, message: "Usuário não encontrado." };
+      }
+      return { success: true, message: usuario };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Erro ao buscar usuario por email." };
+    }
   }
 }

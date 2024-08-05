@@ -15,7 +15,7 @@ export default class UsuarioEntity {
     nome: string,
     email: string,
     celular: string,
-    perfil: number,
+    perfil: EnumPerfil,
     senha: string
   ) {
     this.nome = nome;
@@ -32,12 +32,8 @@ export default class UsuarioEntity {
   email: string;
   @Column({ unique: true })
   celular: string;
-  @Column({
-    type: "enum",
-    enum: EnumPerfil,
-    default: EnumPerfil.admin,
-  })
-  perfil: number;
+  @Column({ nullable: false })
+  perfil: EnumPerfil;
   @Column({ nullable: false })
   senha: string;
   @CreateDateColumn({ type: "date" })
