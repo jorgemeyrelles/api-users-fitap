@@ -1,6 +1,7 @@
 import AcademiaEntity from "../../entities/AcademiaEntity.js";
 import UsuarioEntity from "../../entities/UsuarioEntity.js";
 import { UUID } from "crypto";
+import EnumPerfil from "../../enums/EnumPerfil.js";
 
 export default interface InterfaceUsuarioRepository {
   newUsuario(user: UsuarioEntity): void | Promise<void>;
@@ -17,7 +18,7 @@ export default interface InterfaceUsuarioRepository {
     | UsuarioEntity
     | Promise<{ success: boolean; message?: UsuarioEntity | string }>;
   getUsuarioByPerfil(
-    perfil: string
+    perfil: EnumPerfil
   ):
     | Array<UsuarioEntity>
     | Promise<{ success: boolean; message?: UsuarioEntity[] | string }>;
