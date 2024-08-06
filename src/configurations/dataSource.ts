@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import UsuarioEntity from "../entities/UsuarioEntity.js";
 import AlunoEntity from "../entities/AlunoEntity.js";
 import AcademiaEntity from "../entities/AcademiaEntity.js";
+import ProfessorEntity from "../entities/ProfessorEntity.js";
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ export const AppDataSource = new DataSource({
   database: schema,
   synchronize: true,
   logging: true,
-  entities: [UsuarioEntity, AlunoEntity, AcademiaEntity],
+  entities: [UsuarioEntity, AlunoEntity, AcademiaEntity, ProfessorEntity],
   subscribers: [],
   migrations: [],
 });

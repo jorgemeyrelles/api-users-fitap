@@ -55,12 +55,8 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
       if (!usuario) {
         return { success: false, message: "Usuário não encontrado." };
       }
-      const deleted = {
-        ...usuario,
-        deleted_at: new Date(),
-      };
 
-      await this.repository.update(id, deleted);
+      await this.repository.softDelete(id);
 
       return { success: true };
     } catch (error) {
