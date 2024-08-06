@@ -15,8 +15,12 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
     key: Tipo,
     valor: UsuarioEntity[Tipo]
   ): Promise<UsuarioEntity | null> {
+    const whereClause = {
+      [key]: valor,
+      deleted_at: null,
+    } as unknown as Record<string, any>;
     const user = await this.repository.findOne({
-      where: { [key]: valor },
+      where: whereClause,
     });
     return user;
   }
@@ -85,8 +89,12 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
     perfil: EnumPerfil
   ): Promise<{ success: boolean; message: UsuarioEntity[] | string }> {
     try {
+      const whereClause = {
+        perfil,
+        deleted_at: null,
+      } as unknown as Record<string, any>;
       const usuarios = await this.repository.find({
-        where: { perfil },
+        where: whereClause,
       });
       if (usuarios.length === 0) {
         return { success: false, message: "Nenhum usuário encontrado." };

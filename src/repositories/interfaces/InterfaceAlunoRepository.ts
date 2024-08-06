@@ -6,7 +6,7 @@ export default interface InterfaceAlunoRepository {
   newAluno(aluno: AlunoEntity): void | Promise<void>;
   updateAluno(
     id: UUID,
-    user: AlunoEntity
+    aluno: AlunoEntity
   ): void | Promise<{ success: boolean; message?: string }>;
   deleteAluno(
     id: UUID
@@ -17,7 +17,7 @@ export default interface InterfaceAlunoRepository {
     | AlunoEntity
     | Promise<{ success: boolean; message?: AlunoEntity | string }>;
   updateAcademiaAluno(
-    id: UUID,
+    idAluno: UUID,
     academia: AcademiaEntity
   ): void | Promise<{ success: boolean; message?: string }>;
   

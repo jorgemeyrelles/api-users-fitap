@@ -24,8 +24,11 @@ export default class AlunoEntity {
     academia?: AcademiaEntity
   ) {
     this.usuario = usuario;
+    this.usuario_id = usuario ? usuario.id : null;
     this.professor = professor;
+    this.professor_id = professor ? professor.id : null;
     this.academia = academia;
+    this.academia_id = academia ? academia.id : null;
   }
   @PrimaryGeneratedColumn("uuid")
   id!: UUID;
@@ -34,17 +37,27 @@ export default class AlunoEntity {
     cascade: true,
     eager: true,
   })
-  @JoinColumn()
-  usuario: UsuarioEntity;
+  @JoinColumn({ name: "usuario_id" })
+  usuario!: UsuarioEntity;
+
+  @Column({ type: "uuid" })
+  usuario_id!: UUID | null;
   @ManyToOne(() => ProfessorEntity, (professor) => professor.alunos)
-  professor?: ProfessorEntity;
+  @JoinColumn({ name: "professor_id" })
+  professor!: ProfessorEntity;
+
+  @Column({ type: "uuid" })
+  professor_id!: UUID | null;
   @OneToOne(() => AcademiaEntity, {
     nullable: true,
     cascade: true,
     eager: true,
   })
-  @JoinColumn()
+  @JoinColumn({ name: "academia_id" })
   academia?: AcademiaEntity;
+
+  @Column({ type: "uuid", nullable: true })
+  academia_id?: UUID | null;
   @CreateDateColumn({ type: "datetime", nullable: false })
   created_at!: Date;
 
