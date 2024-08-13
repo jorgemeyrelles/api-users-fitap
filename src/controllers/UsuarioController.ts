@@ -37,7 +37,7 @@ export default class UsuarioController {
     if (!success) {
       return res.status(404).json({ message });
     }
-    return res.sendStatus(204);
+    return res.sendStatus(200);
   }
   async deleteUsuario(req: Request, res: Response) {
     const { id } = req.params;
@@ -48,7 +48,7 @@ export default class UsuarioController {
     if (!success) {
       return res.status(404).json({ message });
     }
-    return res.status(204).json(message);
+    return res.status(200).json(message);
   }
   async getUsuarioByPerfil(req: Request, res: Response) {
     const { perfil } = req.params;
@@ -59,7 +59,8 @@ export default class UsuarioController {
     if (!success) {
       return res.status(404).json({ message });
     }
-    return res.status(204).json(message);
+
+    return res.json({ message });
   }
   async getUsuarioById(req: Request, res: Response) {
     const { id } = req.params;
@@ -70,15 +71,17 @@ export default class UsuarioController {
     if (!success) {
       return res.status(404).json({ message });
     }
-    return res.status(204).json(message);
+
+    return res.status(200).json({ message });
   }
   async getUsuarioByEmail(req: Request, res: Response) {
-    const email = req.body;
+    const { email } = req.body;
     const { success, message } = await this.repository.getUsuarioByEmail(email);
 
     if (!success) {
       return res.status(404).json({ message });
     }
-    return res.status(204).json(message);
+
+    return res.status(200).json({ message });
   }
 }

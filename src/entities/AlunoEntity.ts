@@ -19,16 +19,27 @@ import UsuarioEntity from "./UsuarioEntity.js";
 @Entity("aluno")
 export default class AlunoEntity {
   constructor(
-    usuario: UsuarioEntity,
-    professor: ProfessorEntity,
+    usuario?: UsuarioEntity,
+    professor?: ProfessorEntity,
+    usuario_id?: UUID,
+    professor_id?: UUID,
+    academia_id?: UUID,
     academia?: AcademiaEntity
   ) {
     this.usuario = usuario;
-    this.usuario_id = usuario ? usuario.id : null;
+    this.usuario_id = usuario_id ? usuario_id : usuario ? usuario.id : null;
     this.professor = professor;
-    this.professor_id = professor ? professor.id : null;
+    this.professor_id = professor_id
+      ? professor_id
+      : professor
+        ? professor.id
+        : null;
     this.academia = academia;
-    this.academia_id = academia ? academia.id : null;
+    this.academia_id = academia_id
+      ? academia_id
+      : academia
+        ? academia.id
+        : null;
   }
   @PrimaryGeneratedColumn("uuid")
   id!: UUID;
@@ -38,13 +49,13 @@ export default class AlunoEntity {
     eager: true,
   })
   @JoinColumn({ name: "usuario_id" })
-  usuario!: UsuarioEntity;
+  usuario?: UsuarioEntity;
 
   @Column({ type: "uuid" })
   usuario_id!: UUID | null;
   @ManyToOne(() => ProfessorEntity, (professor) => professor.alunos)
   @JoinColumn({ name: "professor_id" })
-  professor!: ProfessorEntity;
+  professor?: ProfessorEntity;
 
   @Column({ type: "uuid" })
   professor_id!: UUID | null;

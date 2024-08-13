@@ -110,19 +110,21 @@ export default class UsuarioRepository implements InterfaceUsuarioRepository {
   }
   async getUsuarioByEmail(
     email: string
-  ): Promise<{ success: boolean; message: UsuarioEntity | string }> {
+  ): Promise<{ success: boolean; message?: UsuarioEntity | string }> {
     try {
       const usuario = await this.usuarioByKey(
         "email" as keyof UsuarioEntity,
         email
       );
+
       if (!usuario) {
         return { success: false, message: "Usuário não encontrado." };
       }
-      return { success: true, message: usuario };
+
+      return { success: true, message: <UsuarioEntity>usuario };
     } catch (error) {
       console.error(error);
-      return { success: false, message: "Erro ao buscar usuario por email." };
+      return { success: false };
     }
   }
 }

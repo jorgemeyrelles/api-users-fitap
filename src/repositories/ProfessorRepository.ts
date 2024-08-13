@@ -10,15 +10,13 @@ export default class ProfessorRepository
 {
   private professorRepository: Repository<ProfessorEntity>;
   private usuarioRepository: Repository<UsuarioEntity>;
-  private alunoRepository: Repository<AlunoEntity>;
+
   constructor(
     professorRepository: Repository<ProfessorEntity>,
-    usuarioRepository: Repository<UsuarioEntity>,
-    alunoRepository: Repository<AlunoEntity>
+    usuarioRepository: Repository<UsuarioEntity>
   ) {
     this.professorRepository = professorRepository;
     this.usuarioRepository = usuarioRepository;
-    this.alunoRepository = alunoRepository;
   }
 
   private async professorByKey<Tipo extends keyof ProfessorEntity>(
@@ -108,6 +106,32 @@ export default class ProfessorRepository
       }
       const professor = await this.professorByKey(
         "usuario_id" as keyof ProfessorEntity,
+        usuario.id
+      );
+
+      return { success: true, message: <ProfessorEntity>professor };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Erro ao tentar buscar aluno." };
+    }
+  }
+
+  async getProfessorById(
+    idUsuario: UUID
+  ): Promise<{ success: boolean; message?: ProfessorEntity | string }> {
+    try {
+      const whereClause = {
+        id: idUsuario,
+        deleted_at: null,
+      } as unknown as Record<string, any>;
+      const usuario = await this.usuarioRepository.findOne({
+        where: whereClause,
+      });
+      if (!usuario) {
+        return { success: false, message: "Usuário não encontrado." };
+      }
+      const professor = await this.professorByKey(
+        "id" as keyof ProfessorEntity,
         usuario.id
       );
 
