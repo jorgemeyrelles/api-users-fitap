@@ -117,23 +117,17 @@ export default class ProfessorRepository
   }
 
   async getProfessorById(
-    idUsuario: UUID
+    idProfessor: UUID
   ): Promise<{ success: boolean; message?: ProfessorEntity | string }> {
     try {
-      const whereClause = {
-        id: idUsuario,
-        deleted_at: null,
-      } as unknown as Record<string, any>;
-      const usuario = await this.usuarioRepository.findOne({
-        where: whereClause,
-      });
-      if (!usuario) {
-        return { success: false, message: "Usuário não encontrado." };
-      }
       const professor = await this.professorByKey(
         "id" as keyof ProfessorEntity,
-        usuario.id
+        idProfessor as UUID
       );
+
+      if (!professor) {
+        return { success: false, message: "Professor não encontrado." };
+      }
 
       return { success: true, message: <ProfessorEntity>professor };
     } catch (error) {

@@ -21,7 +21,7 @@ router.put("/:idAluno/:idUsuario", (req, res) =>
 router.delete("/:id", (req, res) =>
   professorController.deleteProfessor(req, res)
 );
-router.get("/:idAluno/:idUsuario", (req, res) =>
+router.get("/:id", (req, res) =>
   professorController.getProfessorById(req, res)
 );
 router.get("/", (req, res) =>
