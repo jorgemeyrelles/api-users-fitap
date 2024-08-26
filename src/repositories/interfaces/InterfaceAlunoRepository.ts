@@ -3,14 +3,15 @@ import AcademiaEntity from "../../entities/AcademiaEntity.js";
 import AlunoEntity from "../../entities/AlunoEntity.js";
 
 export default interface InterfaceAlunoRepository {
-  newAluno(aluno: AlunoEntity): void | Promise<void>;
+  newAluno(
+    usuario_id: UUID,
+    professor_id: UUID
+  ): Promise<{ success: boolean; message?: AlunoEntity | String }>;
   updateAluno(
     id: UUID,
     aluno: AlunoEntity
   ): void | Promise<{ success: boolean; message?: string }>;
-  deleteAluno(
-    id: UUID
-  ): void | Promise<{ success: boolean; message?: string }>;
+  deleteAluno(id: UUID): void | Promise<{ success: boolean; message?: string }>;
   getAlunoByEmail(
     email: string
   ):
@@ -20,5 +21,4 @@ export default interface InterfaceAlunoRepository {
     idAluno: UUID,
     academia: AcademiaEntity
   ): void | Promise<{ success: boolean; message?: string }>;
-  
 }

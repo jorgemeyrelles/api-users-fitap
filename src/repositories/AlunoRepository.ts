@@ -4,17 +4,21 @@ import AlunoEntity from "../entities/AlunoEntity.js";
 import InterfaceAlunoRepository from "./interfaces/InterfaceAlunoRepository.js";
 import { Repository } from "typeorm";
 import UsuarioEntity from "../entities/UsuarioEntity.js";
+import ProfessorEntity from "../entities/ProfessorEntity.js";
 
 export default class AlunoRepository implements InterfaceAlunoRepository {
   private alunoRepository: Repository<AlunoEntity>;
   private usuarioRepository: Repository<UsuarioEntity>;
+  private professorRepository: Repository<ProfessorEntity>;
 
   constructor(
     alunoRepository: Repository<AlunoEntity>,
-    usuarioRepository: Repository<UsuarioEntity>
+    usuarioRepository: Repository<UsuarioEntity>,
+    professorRepository: Repository<ProfessorEntity>
   ) {
     this.alunoRepository = alunoRepository;
     this.usuarioRepository = usuarioRepository;
+    this.professorRepository = professorRepository;
   }
 
   private async alunoByKey<Tipo extends keyof AlunoEntity>(
@@ -31,8 +35,35 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
     return aluno;
   }
 
-  async newAluno(aluno: AlunoEntity): Promise<void> {
-    await this.alunoRepository.save(aluno);
+  async newAluno(
+    usuario_aluno_id: UUID,
+    professor_id: UUID
+  ): Promise<{ success: boolean; message?: AlunoEntity | String }> {
+    try {
+      let usuario: any = null;
+      let professor: any = null;
+      if (usuario_aluno_id) {
+        const user = await this.usuarioRepository.findOne({
+          where: { id: usuario_aluno_id },
+        });
+        if (!user) throw new Error();
+        usuario = user as UsuarioEntity;
+      }
+      if (professor_id) {
+        const prof = await this.professorRepository.findOne({
+          where: { id: professor_id },
+        });
+        if (!prof) throw new Error();
+        professor = prof as ProfessorEntity;
+      }
+
+      const newAluno = new AlunoEntity(usuario, professor);
+      await this.alunoRepository.save(newAluno);
+      return { success: true, message: newAluno };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Erro ao tentar registrar aluno." };
+    }
   }
   async updateAluno(
     id: UUID,
@@ -87,6 +118,30 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
         "usuario_id" as keyof AlunoEntity,
         usuario.id
       );
+
+      return { success: true, message: <AlunoEntity>aluno };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Erro ao tentar buscar aluno." };
+    }
+  }
+  async getAlunoById(
+    idAluno: string
+  ): Promise<{ success: boolean; message?: AlunoEntity | string }> {
+    try {
+      const whereClause = {
+        id: idAluno,
+        deleted_at: null,
+      } as unknown as Record<string, any>;
+      
+      const aluno = await this.alunoByKey(
+        "id" as keyof AlunoEntity,
+        idAluno as UUID
+      );
+
+      if (!aluno) {
+        return { success: false, message: "Aluno não encontrado." };
+      }
 
       return { success: true, message: <AlunoEntity>aluno };
     } catch (error) {
