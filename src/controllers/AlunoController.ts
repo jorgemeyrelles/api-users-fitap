@@ -7,11 +7,8 @@ import AcademiaEntity from "../entities/AcademiaEntity.js";
 export default class AlunoController {
   constructor(private repository: AlunoRepository) {}
   async newAluno(req: Request, res: Response) {
-    const { professor_id, usuario_id } = <AlunoEntity>req.body;
-
     const { message } = await this.repository.newAluno(
-      usuario_id as UUID,
-      professor_id as UUID
+      req.body as AlunoEntity
     );
 
     return res.status(200).json({ data: message });

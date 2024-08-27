@@ -4,6 +4,7 @@ import InterfaceProfessorRepository from "./interfaces/InterfaceProfessorReposit
 import { Repository } from "typeorm";
 import UsuarioEntity from "../entities/UsuarioEntity.js";
 import AlunoEntity from "../entities/AlunoEntity.js";
+import EnumPerfil from "../enums/EnumPerfil.js";
 
 export default class ProfessorRepository
   implements InterfaceProfessorRepository
@@ -48,6 +49,19 @@ export default class ProfessorRepository
   }
 
   async newProfessor(professor: ProfessorEntity): Promise<void> {
+    const { usuario } = professor;
+    if (usuario) {
+      const { nome, email, celular, senha } = usuario as UsuarioEntity;
+      const newUser = new UsuarioEntity(
+        nome,
+        email,
+        celular,
+        EnumPerfil.professor,
+        senha
+      );
+      await this.usuarioRepository.save(newUser);
+      professor.usuario = newUser;
+    }
     await this.professorRepository.save(professor);
   }
   async updateProfessor(

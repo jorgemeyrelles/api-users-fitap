@@ -5,6 +5,7 @@ import InterfaceAlunoRepository from "./interfaces/InterfaceAlunoRepository.js";
 import { Repository } from "typeorm";
 import UsuarioEntity from "../entities/UsuarioEntity.js";
 import ProfessorEntity from "../entities/ProfessorEntity.js";
+import EnumPerfil from "../enums/EnumPerfil.js";
 
 export default class AlunoRepository implements InterfaceAlunoRepository {
   private alunoRepository: Repository<AlunoEntity>;
@@ -36,30 +37,44 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
   }
 
   async newAluno(
-    usuario_aluno_id: UUID,
-    professor_id: UUID
+    aluno: AlunoEntity
   ): Promise<{ success: boolean; message?: AlunoEntity | String }> {
     try {
-      let usuario: any = null;
-      let professor: any = null;
-      if (usuario_aluno_id) {
+      const { usuario, usuario_id, professor_id, professor } = aluno;
+
+      if (usuario_id) {
         const user = await this.usuarioRepository.findOne({
-          where: { id: usuario_aluno_id },
+          where: { id: usuario_id },
         });
         if (!user) throw new Error();
-        usuario = user as UsuarioEntity;
+        aluno.usuario = user;
+      } else if (usuario) {
+        const { nome, email, celular, senha } = usuario as UsuarioEntity;
+        const newUser = new UsuarioEntity(
+          nome,
+          email,
+          celular,
+          EnumPerfil.aluno,
+          senha
+        );
+
+        await this.usuarioRepository.save(newUser);
+        aluno.usuario = newUser;
+      } else {
+        throw new Error();
       }
       if (professor_id) {
         const prof = await this.professorRepository.findOne({
           where: { id: professor_id },
         });
         if (!prof) throw new Error();
-        professor = prof as ProfessorEntity;
+        aluno.professor = prof;
+      } else {
+        throw new Error();
       }
 
-      const newAluno = new AlunoEntity(usuario, professor);
-      await this.alunoRepository.save(newAluno);
-      return { success: true, message: newAluno };
+      await this.alunoRepository.save(aluno);
+      return { success: true, message: aluno };
     } catch (error) {
       console.error(error);
       return { success: false, message: "Erro ao tentar registrar aluno." };
@@ -133,7 +148,7 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
         id: idAluno,
         deleted_at: null,
       } as unknown as Record<string, any>;
-      
+
       const aluno = await this.alunoByKey(
         "id" as keyof AlunoEntity,
         idAluno as UUID

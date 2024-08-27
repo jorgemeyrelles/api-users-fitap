@@ -3,10 +3,7 @@ import AcademiaEntity from "../../entities/AcademiaEntity.js";
 import AlunoEntity from "../../entities/AlunoEntity.js";
 
 export default interface InterfaceAlunoRepository {
-  newAluno(
-    usuario_id: UUID,
-    professor_id: UUID
-  ): Promise<{ success: boolean; message?: AlunoEntity | String }>;
+  newAluno(aluno: AlunoEntity): Promise<{ success: boolean; message?: AlunoEntity | String }>;
   updateAluno(
     id: UUID,
     aluno: AlunoEntity
