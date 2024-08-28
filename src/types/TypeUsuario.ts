@@ -1,12 +1,20 @@
 import { UUID } from "crypto";
 import EnumPerfil from "../enums/EnumPerfil.js";
+import UsuarioEntity from "../entities/UsuarioEntity.js";
 
-type TipoUsuario = {
-  id: UUID;
-  nome: string;
-  senha: string;
-  email: string;
-  perfil: EnumPerfil;
+type UsuarioRequestParams = {
+  idAluno?: String;
+  id?: String;
 };
 
-export default TipoUsuario;
+type Usuario = Pick<
+  UsuarioEntity,
+  "id" | "nome" | "email" | "celular" | "perfil"
+>;
+
+type UsuarioRequestBody = Pick<
+  UsuarioEntity,
+  "id" | "nome" | "email" | "celular" | "perfil"
+>;
+
+export { UsuarioRequestParams, Usuario, UsuarioRequestBody };

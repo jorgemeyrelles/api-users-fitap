@@ -48,21 +48,29 @@ export default class ProfessorRepository
     return usuario;
   }
 
-  async newProfessor(professor: ProfessorEntity): Promise<void> {
-    const { usuario } = professor;
-    if (usuario) {
-      const { nome, email, celular, senha } = usuario as UsuarioEntity;
-      const newUser = new UsuarioEntity(
-        nome,
-        email,
-        celular,
-        EnumPerfil.professor,
-        senha
-      );
-      await this.usuarioRepository.save(newUser);
-      professor.usuario = newUser;
+  async newProfessor(
+    professor: ProfessorEntity
+  ): Promise<{ success: boolean; message?: ProfessorEntity | string }> {
+    try {
+      const { usuario } = professor;
+      if (usuario) {
+        const { nome, email, celular, senha } = usuario as UsuarioEntity;
+        const newUser = new UsuarioEntity(
+          nome,
+          email,
+          celular,
+          EnumPerfil.professor,
+          senha
+        );
+        await this.usuarioRepository.save(newUser);
+        professor.usuario = newUser;
+      }
+      await this.professorRepository.save(professor);
+      return { success: true, message: professor };
+    } catch (error) {
+      console.log(error);
+      return { success: false, message: "Erro ao tentar criar novo professor" };
     }
-    await this.professorRepository.save(professor);
   }
   async updateProfessor(
     id: UUID,

@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import AcademiaEntity from "../entities/AcademiaEntity.js";
 
 type TipoAcademia = {
   id: UUID;
@@ -8,4 +9,13 @@ type TipoAcademia = {
   nome: string;
 };
 
-export default TipoAcademia;
+type Academia = Pick<
+  AcademiaEntity,
+  "id" | "nome" | "estado" | "cidade" | "bairro"
+>;
+type AcademiaRequestBody = Omit<AcademiaEntity, "id">;
+type AcademiaResponse = {
+  data?: Pick<AcademiaEntity, "id" | "nome" | "estado" | "cidade" | "bairro">;
+};
+
+export { TipoAcademia, Academia, AcademiaResponse, AcademiaRequestBody };

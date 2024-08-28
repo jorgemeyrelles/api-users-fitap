@@ -5,13 +5,15 @@ import AlunoEntity from "../entities/AlunoEntity.js";
 import UsuarioEntity from "../entities/UsuarioEntity.js";
 import ProfessorEntity from "../entities/ProfessorEntity.js";
 import AlunoRepository from "../repositories/AlunoRepository.js";
+import AcademiaEntity from "../entities/AcademiaEntity.js";
 
 const router = express.Router();
 
 const alunoRepository = new AlunoRepository(
   AppDataSource.getRepository(AlunoEntity),
   AppDataSource.getRepository(UsuarioEntity),
-  AppDataSource.getRepository(ProfessorEntity)
+  AppDataSource.getRepository(ProfessorEntity),
+  AppDataSource.getRepository(AcademiaEntity)
 );
 
 const alunoController = new AlunoController(alunoRepository);

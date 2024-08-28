@@ -11,15 +11,18 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
   private alunoRepository: Repository<AlunoEntity>;
   private usuarioRepository: Repository<UsuarioEntity>;
   private professorRepository: Repository<ProfessorEntity>;
+  private academiaRepository: Repository<AcademiaEntity>;
 
   constructor(
     alunoRepository: Repository<AlunoEntity>,
     usuarioRepository: Repository<UsuarioEntity>,
-    professorRepository: Repository<ProfessorEntity>
+    professorRepository: Repository<ProfessorEntity>,
+    academiaRepository: Repository<AcademiaEntity>
   ) {
     this.alunoRepository = alunoRepository;
     this.usuarioRepository = usuarioRepository;
     this.professorRepository = professorRepository;
+    this.academiaRepository = academiaRepository;
   }
 
   private async alunoByKey<Tipo extends keyof AlunoEntity>(
@@ -32,6 +35,7 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
     } as unknown as Record<string, any>;
     const aluno = await this.alunoRepository.findOne({
       where: whereClause,
+      relations: ["usuario", "professor", "academia"],
     });
     return aluno;
   }
@@ -40,7 +44,7 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
     aluno: AlunoEntity
   ): Promise<{ success: boolean; message?: AlunoEntity | String }> {
     try {
-      const { usuario, usuario_id, professor_id, professor } = aluno;
+      const { usuario, usuario_id, professor_id, academia } = aluno;
 
       if (usuario_id) {
         const user = await this.usuarioRepository.findOne({
@@ -63,6 +67,7 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
       } else {
         throw new Error();
       }
+
       if (professor_id) {
         const prof = await this.professorRepository.findOne({
           where: { id: professor_id },
@@ -71,6 +76,15 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
         aluno.professor = prof;
       } else {
         throw new Error();
+      }
+
+      if (academia) {
+        const { nome, estado, cidade, bairro } = academia;
+
+        const newAcademia = new AcademiaEntity(nome, estado, cidade, bairro);
+
+        await this.academiaRepository.save(newAcademia);
+        aluno.academia = newAcademia;
       }
 
       await this.alunoRepository.save(aluno);
@@ -144,11 +158,6 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
     idAluno: string
   ): Promise<{ success: boolean; message?: AlunoEntity | string }> {
     try {
-      const whereClause = {
-        id: idAluno,
-        deleted_at: null,
-      } as unknown as Record<string, any>;
-
       const aluno = await this.alunoByKey(
         "id" as keyof AlunoEntity,
         idAluno as UUID
@@ -167,7 +176,7 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
   async updateAcademiaAluno(
     idAluno: UUID,
     academia: AcademiaEntity
-  ): Promise<{ success: boolean; message?: string }> {
+  ): Promise<{ success: boolean; message?: AlunoEntity | string }> {
     try {
       const aluno = await this.alunoByKey("id" as keyof AlunoEntity, idAluno);
 
@@ -183,7 +192,7 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
       );
       aluno.academia = newAcademia;
       await this.alunoRepository.save(aluno);
-      return { success: true };
+      return { success: true, message: aluno };
     } catch (error) {
       console.error(error);
       return { success: false, message: "Erro ao tentar atualizar academia." };
