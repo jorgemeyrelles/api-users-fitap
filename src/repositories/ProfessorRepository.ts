@@ -4,21 +4,20 @@ import InterfaceProfessorRepository from "./interfaces/InterfaceProfessorReposit
 import { Repository } from "typeorm";
 import UsuarioEntity from "../entities/UsuarioEntity.js";
 import AlunoEntity from "../entities/AlunoEntity.js";
+import EnumPerfil from "../enums/EnumPerfil.js";
 
 export default class ProfessorRepository
   implements InterfaceProfessorRepository
 {
   private professorRepository: Repository<ProfessorEntity>;
   private usuarioRepository: Repository<UsuarioEntity>;
-  private alunoRepository: Repository<AlunoEntity>;
+
   constructor(
     professorRepository: Repository<ProfessorEntity>,
-    usuarioRepository: Repository<UsuarioEntity>,
-    alunoRepository: Repository<AlunoEntity>
+    usuarioRepository: Repository<UsuarioEntity>
   ) {
     this.professorRepository = professorRepository;
     this.usuarioRepository = usuarioRepository;
-    this.alunoRepository = alunoRepository;
   }
 
   private async professorByKey<Tipo extends keyof ProfessorEntity>(
@@ -49,8 +48,29 @@ export default class ProfessorRepository
     return usuario;
   }
 
-  async newProfessor(professor: ProfessorEntity): Promise<void> {
-    await this.professorRepository.save(professor);
+  async newProfessor(
+    professor: ProfessorEntity
+  ): Promise<{ success: boolean; message?: ProfessorEntity | string }> {
+    try {
+      const { usuario } = professor;
+      if (usuario) {
+        const { nome, email, celular, senha } = usuario as UsuarioEntity;
+        const newUser = new UsuarioEntity(
+          nome,
+          email,
+          celular,
+          EnumPerfil.professor,
+          senha
+        );
+        await this.usuarioRepository.save(newUser);
+        professor.usuario = newUser;
+      }
+      await this.professorRepository.save(professor);
+      return { success: true, message: professor };
+    } catch (error) {
+      console.log(error);
+      return { success: false, message: "Erro ao tentar criar novo professor" };
+    }
   }
   async updateProfessor(
     id: UUID,
@@ -110,6 +130,26 @@ export default class ProfessorRepository
         "usuario_id" as keyof ProfessorEntity,
         usuario.id
       );
+
+      return { success: true, message: <ProfessorEntity>professor };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Erro ao tentar buscar aluno." };
+    }
+  }
+
+  async getProfessorById(
+    idProfessor: UUID
+  ): Promise<{ success: boolean; message?: ProfessorEntity | string }> {
+    try {
+      const professor = await this.professorByKey(
+        "id" as keyof ProfessorEntity,
+        idProfessor as UUID
+      );
+
+      if (!professor) {
+        return { success: false, message: "Professor não encontrado." };
+      }
 
       return { success: true, message: <ProfessorEntity>professor };
     } catch (error) {

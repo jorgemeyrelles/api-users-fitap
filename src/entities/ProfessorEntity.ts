@@ -17,9 +17,13 @@ import UsuarioEntity from "./UsuarioEntity.js";
 
 @Entity("professor")
 export default class ProfessorEntity {
-  constructor(usuario: UsuarioEntity, alunos?: AlunoEntity[]) {
+  constructor(
+    usuario_id: UUID | null,
+    usuario?: UsuarioEntity,
+    alunos?: AlunoEntity[]
+  ) {
+    this.usuario_id = usuario_id;
     this.usuario = usuario;
-    this.usuario_id = usuario ? usuario.id : null;
     this.alunos = alunos;
   }
   @PrimaryGeneratedColumn("uuid")
@@ -30,7 +34,7 @@ export default class ProfessorEntity {
     eager: true,
   })
   @JoinColumn({ name: "usuario_id" })
-  usuario!: UsuarioEntity;
+  usuario!: UsuarioEntity | undefined;
 
   @Column({ type: "uuid" })
   usuario_id!: UUID | null;

@@ -3,7 +3,11 @@ import ProfessorEntity from "../../entities/ProfessorEntity.js";
 import AlunoEntity from "../../entities/AlunoEntity.js";
 
 export default interface InterfaceProfessorRepository {
-  newProfessor(professor: ProfessorEntity): void | Promise<void>;
+  newProfessor(
+    professor: ProfessorEntity
+  ):
+    | Promise<{ success: boolean; message?: ProfessorEntity | string }>
+    | Promise<void>;
   updateProfessor(
     id: UUID,
     professor: ProfessorEntity

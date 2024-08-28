@@ -2,15 +2,19 @@ import express from "express";
 import router from "./routes/index.js";
 import "reflect-metadata";
 import { AppDataSource } from "./configurations/dataSource.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+const schema = process.env.SCHEMA_DB;
+const port = process.env.PORT;
 
 const app = express();
-
 app.use(express.json());
 router(app);
 
 AppDataSource.initialize()
   .then(() => {
-    console.log("Banco de dados conectado!");
+    console.log(`Banco de dados (${schema}) conectado na porta ${port}`);
   })
   .catch((err) => {
     console.error(err);
