@@ -17,5 +17,5 @@ export default interface InterfaceAlunoRepository {
   updateAcademiaAluno(
     idAluno: UUID,
     academia: AcademiaEntity
-  ): void | Promise<{ success: boolean; message?: string }>;
+  ): void | Promise<{ success: boolean; message?: AlunoEntity | string }>;
 }
