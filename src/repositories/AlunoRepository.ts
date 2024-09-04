@@ -173,6 +173,16 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
       return { success: false, message: "Erro ao tentar buscar aluno." };
     }
   }
+
+  async getAllAlunos(): Promise<{
+    success: boolean;
+    message?: AlunoEntity[] | string;
+  }> {
+    const allAlunos = await this.alunoRepository.find();
+
+    return { success: true, message: allAlunos as AlunoEntity[] };
+  }
+
   async updateAcademiaAluno(
     idAluno: UUID,
     academia: AcademiaEntity

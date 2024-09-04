@@ -3,6 +3,7 @@ import ProfessorEntity from "../entities/ProfessorEntity.js";
 import ProfessorRepository from "../repositories/ProfessorRepository.js";
 import { UUID } from "crypto";
 import {
+  Professor,
   ProfessorRequestBody,
   ProfessorRequestParams,
   ProfessorResponse,
@@ -13,7 +14,7 @@ import { UsuarioRequestBody } from "../types/TypeUsuario.js";
 
 export default class ProfessorController {
   constructor(private repository: ProfessorRepository) {}
-  private formatDataResponse<ProfessorResponse>(message: ProfessorEntity) {
+  private formatDataResponse(message: ProfessorEntity) {
     const { id, usuario, alunos } = <ProfessorEntity>message;
 
     const data = {
@@ -39,7 +40,7 @@ export default class ProfessorController {
           }))
         : alunos,
     };
-    return data;
+    return data as Professor;
   }
   async newProfessor(
     req: Request<{}, {}, ProfessorRequestBody>,
@@ -57,7 +58,6 @@ export default class ProfessorController {
     return res.status(200).json({ data });
   }
   updateProfessor(req: Request, res: Response) {
-    const updateProfessor = req.body;
     const { idProfessor, idUsuario } = req.params;
   }
   async deleteProfessor(
@@ -89,7 +89,7 @@ export default class ProfessorController {
 
     const data = this.formatDataResponse(<ProfessorEntity>message);
 
-    return res.status(200).json({ data });
+    return res.status(200).json({ data: data as Professor });
   }
   async getProfessorByEmail(
     req: Request<{}, {}, UsuarioRequestBody>,

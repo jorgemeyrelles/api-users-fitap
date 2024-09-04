@@ -14,7 +14,7 @@ type Usuario = Pick<
 
 type UsuarioRequestBody = Pick<
   UsuarioEntity,
-  "id" | "nome" | "email" | "celular" | "perfil"
+  "nome" | "email" | "celular" | "perfil" | "senha"
 >;
 
 export { UsuarioRequestParams, Usuario, UsuarioRequestBody };

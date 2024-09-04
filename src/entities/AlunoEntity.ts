@@ -52,7 +52,9 @@ export default class AlunoEntity {
   usuario?: UsuarioEntity;
   @Column({ type: "uuid" })
   usuario_id!: UUID | null;
-  @ManyToOne(() => ProfessorEntity, (professor) => professor.alunos)
+  @ManyToOne(() => ProfessorEntity, (professor) => professor.alunos, {
+    eager: true,
+  })
   @JoinColumn({ name: "professor_id" })
   professor?: ProfessorEntity;
 

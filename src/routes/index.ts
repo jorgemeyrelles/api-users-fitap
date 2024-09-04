@@ -6,7 +6,7 @@ import professorRouter from "./professorRouter.js";
 const router = (app: express.Router) => {
   app.use("/v1/usuario", usuarioRouter);
   app.use("/v1/aluno", alunoRouter);
-  app.use("/v1/professore", professorRouter);
+  app.use("/v1/professor", professorRouter);
 };
 
 export default router;
