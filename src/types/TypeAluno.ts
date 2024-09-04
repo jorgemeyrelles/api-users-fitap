@@ -1,10 +1,8 @@
 import { UUID } from "crypto";
-import { TipoAcademia, Academia } from "./TypeAcademia.js";
+import { TipoAcademia, Academia, AcademiaRequestBody } from "./TypeAcademia.js";
 import AlunoEntity from "../entities/AlunoEntity.js";
-import { Usuario } from "./TypeUsuario.js";
+import { Usuario, UsuarioRequestBody } from "./TypeUsuario.js";
 import { Professor } from "./TypeProfessor.js";
-import ProfessorEntity from "../entities/ProfessorEntity.js";
-import UsuarioEntity from "../entities/UsuarioEntity.js";
 
 type TipoAluno = {
   id: UUID;
@@ -12,21 +10,20 @@ type TipoAluno = {
   academia: TipoAcademia;
 };
 
-type AlunoRequestBody = Omit<AlunoEntity, "id" | "professor">;
+type AlunoRequestBody = {
+  usuario?: UsuarioRequestBody;
+  professor?: Pick<Professor, "id" | "usuario"> | { id: String };
+  academia?: AcademiaRequestBody;
+};
 type AlunoResponse = {
-  data?: {
-    id: AlunoEntity["id"];
-    usuario?: Usuario;
-    professor?: Professor;
-    academia?: Academia;
-  };
+  data?: Aluno;
   error?: unknown;
 };
 
 type Aluno = {
   id: AlunoEntity["id"];
   usuario: Usuario;
-  professor: Professor;
+  professor?: Omit<Professor, "alunos">;
   academia: Academia;
 };
 
