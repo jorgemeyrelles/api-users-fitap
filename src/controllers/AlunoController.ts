@@ -3,7 +3,7 @@ import AlunoEntity from "../entities/AlunoEntity.js";
 import AlunoRepository from "../repositories/AlunoRepository.js";
 import { UUID } from "crypto";
 import AcademiaEntity from "../entities/AcademiaEntity.js";
-import { AlunoRequestBody, AlunoResponse } from "../types/TypeAluno.js";
+import { Aluno, AlunoRequestBody, AlunoResponse } from "../types/TypeAluno.js";
 import {
   UsuarioRequestBody,
   UsuarioRequestParams,
@@ -13,7 +13,7 @@ import EnumPerfil from "../enums/EnumPerfil.js";
 export default class AlunoController {
   constructor(private repository: AlunoRepository) {}
 
-  private formatDataToOneUser<AlunoResponse>(message: AlunoEntity) {
+  private formatDataToOneUser(message: AlunoEntity) {
     const { id, usuario, professor, academia } = message as AlunoEntity;
 
     const data = {
@@ -43,7 +43,7 @@ export default class AlunoController {
         bairro: academia?.bairro ?? "",
       },
     };
-    return data;
+    return data as Aluno;
   }
   async newAluno(
     req: Request<{}, {}, AlunoRequestBody>,
@@ -121,5 +121,25 @@ export default class AlunoController {
     const data = this.formatDataToOneUser(<AlunoEntity>message);
 
     return res.status(200).json({ data });
+  }
+
+  async getAllAlunos(
+    req: Request<{}, {}, {}>,
+    res: Response<AlunoResponse | { data: Aluno[] }>
+  ) {
+    const { success, message } = await this.repository.getAllAlunos();
+
+    if (!success) {
+      return res.status(404).json({ error: message });
+    }
+
+    const dataArray: Aluno[] = [];
+    if (Array.isArray(message) && message.length) {
+      message.map((e) =>
+        dataArray.push(this.formatDataToOneUser(<AlunoEntity>e))
+      );
+    }
+
+    return res.status(200).json({ data: <Aluno[]>dataArray });
   }
 }

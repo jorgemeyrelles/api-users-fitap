@@ -13,7 +13,10 @@ type Academia = Pick<
   AcademiaEntity,
   "id" | "nome" | "estado" | "cidade" | "bairro"
 >;
-type AcademiaRequestBody = Omit<AcademiaEntity, "id">;
+type AcademiaRequestBody = Pick<
+  AcademiaEntity,
+  "nome" | "estado" | "cidade" | "bairro"
+>;
 type AcademiaResponse = {
   data?: Pick<AcademiaEntity, "id" | "nome" | "estado" | "cidade" | "bairro">;
 };
