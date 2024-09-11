@@ -20,4 +20,12 @@ export default interface InterfaceProfessorRepository {
   ):
     | ProfessorEntity
     | Promise<{ success: boolean; message?: ProfessorEntity | string }>;
+  getProfessorById(
+    idProfessor: UUID
+  ):
+    | ProfessorEntity
+    | Promise<{ success: boolean; message?: ProfessorEntity | string }>;
+  getAllProfessores():
+    | ProfessorEntity[]
+    | Promise<{ success: boolean; message?: ProfessorEntity[] | string }>;
 }

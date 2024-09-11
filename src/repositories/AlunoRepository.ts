@@ -44,7 +44,7 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
     aluno: AlunoEntity
   ): Promise<{ success: boolean; message?: AlunoEntity | String }> {
     try {
-      const { usuario, usuario_id, professor_id, academia } = aluno;
+      const { usuario, usuario_id, professor, professor_id, academia } = aluno;
 
       if (usuario_id) {
         const user = await this.usuarioRepository.findOne({
@@ -71,6 +71,13 @@ export default class AlunoRepository implements InterfaceAlunoRepository {
       if (professor_id) {
         const prof = await this.professorRepository.findOne({
           where: { id: professor_id },
+        });
+        if (!prof) throw new Error();
+        aluno.professor = prof;
+      } else if (professor) {
+        const { id } = professor;
+        const prof = await this.professorRepository.findOne({
+          where: { id },
         });
         if (!prof) throw new Error();
         aluno.professor = prof;

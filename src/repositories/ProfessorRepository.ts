@@ -157,4 +157,19 @@ export default class ProfessorRepository
       return { success: false, message: "Erro ao tentar buscar aluno." };
     }
   }
+  async getAllProfessores(): Promise<{
+    success: boolean;
+    message?: ProfessorEntity[] | string;
+  }> {
+    try {
+      const all = await this.professorRepository.find();
+      return { success: true, message: all as ProfessorEntity[] };
+    } catch (error) {
+      console.log(error);
+      return {
+        success: false,
+        message: "Erro ao tentar buscar todos os professores.",
+      };
+    }
+  }
 }

@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import EnumPerfil from "../enums/EnumPerfil.js";
+import { criptografaSenha } from "../utils/criptografaSenha.js";
 
 @Entity("usuario")
 export default class UsuarioEntity {
@@ -56,5 +57,11 @@ export default class UsuarioEntity {
   @BeforeUpdate()
   setUpdateDate() {
     this.updated_at = new Date();
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  private async hashSenha(senha: string) {
+    this.senha = criptografaSenha(senha);
   }
 }

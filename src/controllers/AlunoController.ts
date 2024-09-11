@@ -49,7 +49,11 @@ export default class AlunoController {
     req: Request<{}, {}, AlunoRequestBody>,
     res: Response<AlunoResponse>
   ) {
-    const { message } = await this.repository.newAluno(req.body as AlunoEntity);
+    const { success, message } = await this.repository.newAluno(req.body as AlunoEntity);
+
+    if (!success) {
+      return res.status(404).json({ error: message });
+    }
 
     const data = this.formatDataToOneUser(<AlunoEntity>message);
 

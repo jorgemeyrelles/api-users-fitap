@@ -14,7 +14,7 @@ import { UsuarioRequestBody } from "../types/TypeUsuario.js";
 
 export default class ProfessorController {
   constructor(private repository: ProfessorRepository) {}
-  private formatDataResponse(message: ProfessorEntity) {
+  private formatDataResponse(message: ProfessorEntity): Professor {
     const { id, usuario, alunos } = <ProfessorEntity>message;
 
     const data = {
@@ -107,5 +107,25 @@ export default class ProfessorController {
     const data = this.formatDataResponse(<ProfessorEntity>message);
 
     return res.status(200).json({ data });
+  }
+
+  async getAllProfessores(
+    req: Request<{}, {}, {}>,
+    res: Response<ProfessorResponse | { data: Professor[] }>
+  ) {
+    const { success, message } = await this.repository.getAllProfessores();
+
+    if (!success) {
+      return res.status(404).json({ error: message });
+    }
+
+    const dataArray: Professor[] = [];
+    if (Array.isArray(message) && message.length) {
+      message.map((e) =>
+        dataArray.push(this.formatDataResponse(<ProfessorEntity>e))
+      );
+    }
+
+    return res.status(200).json({ data: dataArray });
   }
 }

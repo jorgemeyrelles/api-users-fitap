@@ -1,18 +1,29 @@
 import { Response, Request, NextFunction } from "express";
 import * as yup from "yup";
-import { Professor, ProfessorRequestBody } from "../../types/TypeProfessor.js";
-import { Usuario, UsuarioRequestBody } from "../../types/TypeUsuario.js";
-import { Academia, AcademiaRequestBody } from "../../types/TypeAcademia.js";
+import { ProfessorRequestBody } from "../../types/TypeProfessor.js";
+import { UsuarioRequestBody } from "../../types/TypeUsuario.js";
+import { AcademiaRequestBody } from "../../types/TypeAcademia.js";
 import { AlunoRequestBody } from "../../types/TypeAluno.js";
+import { pt } from "yup-locale-pt";
+import { regex } from "../../utils/constates.js";
+
+yup.setLocale(pt);
 
 const schemaUsuarioRequestBody: yup.ObjectSchema<UsuarioRequestBody> =
   yup.object({
     id: yup.string().optional(),
     nome: yup.string().defined().required(),
     email: yup.string().defined().email().required(),
-    celular: yup.string().defined().required(),
+    celular: yup
+      .string()
+      .defined()
+      .matches(regex.celular.code, regex.celular.message)
+      .required(),
     perfil: yup.number().defined().required(),
-    senha: yup.string().required(),
+    senha: yup
+      .string()
+      .matches(regex.senha.code, regex.senha.message)
+      .required(),
   });
 
 const schemaAcdemiaRequestBody: yup.ObjectSchema<AcademiaRequestBody> =
@@ -70,14 +81,13 @@ const professorRequestDto = async (
     return res.status(400).json({ error: validationError });
   }
 };
-
-const alunoRequestDto = async (
+const usuarioRequestDto = async (
   res: Response,
   req: Request,
   next: NextFunction
 ) => {
   try {
-    await schemaAlunoRequestBody.validate(req.body, { abortEarly: false });
+    await schemaUsuarioRequestBody.validate(req.body, { abortEarly: false });
     return next();
   } catch (error) {
     const yupErrors = <yup.ValidationError>error;
@@ -92,4 +102,4 @@ const alunoRequestDto = async (
   }
 };
 
-export { professorRequestDto, alunoRequestDto };
+export { usuarioRequestDto };
